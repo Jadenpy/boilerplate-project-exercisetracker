@@ -72,26 +72,75 @@ app.get("/api/users", (req, res) => {
 app.post("/api/users/:_id/exercises", (req, res) => {
   // get the _id from the url
   let _id = req.params._id;
-  console.log('the _id in paras is : ', _id);
-  // check if the id exist already
-  
-  // get the username from the users array
-  let username = users.find(user => user._id === parseInt(_id)).username || undefined;
-  console.log('the username in users array is : ', username);
-  return;
-  // check if the username is valid
-  if (!username) {
+  // console.log('the _id in paras is : ', _id);
+  // variables prepare
+  let description, duration, date;
+  // search the user in the users array
+  let user = users.find(user => user._id === parseInt(_id));
+  // console.log('the user in users array is : ', user);
+  if (!user) {
     // response err
     res.json({ error: 'username not found' });
-    console.log('the username is of the _id you input is not found');
-  } else {
-    // 1
-    console.log('the post params is : ', req.params);
+    // console.log('the username is of the _id you input is not found');
+    return;
+  } else { 
+    user.exercises = user.exercises || [];
+    // check description
+    if (!req.body.description) {
+      // response err
+      res.json({ error: 'description not found' });
+      // console.log('the description you input is not found');
+      return;
+    } else {
+      description = req.body.description;
+      // console.log('the description you input is : ', description);
+    }
+    // check duration
+    if (!req.body.duration) {
+      // response err
+      res.json({ error: 'duration not found' });
+      // console.log('the duration you input is not found');
+      return;
+    } else {
+      // check if the duration is a number
+      if (isNaN(req.body.duration)) {
+        // response err
+        res.json({ error: 'duration is not a number' });
+        // console.log('the duration you input is not a number');
+        return;
+      }
+      duration = req.body.duration;
+      duration = parseInt(duration);
+      // console.log('the duration you input is : ', duration);
+    }
+    // check date
+    if (!req.body.date) {
+      // use today's date
+      date = new Date();//.toDateString();
+      // format it '2025-04-30'
+      date = date.toISOString().split('T')[0];
+      // console.log('the date you input is not found, so use today\'s date', date);
+      // return;
+    } else {
+      date = req.body.date;
+      // console.log('the date you input is : ', date);
+      // return;
+    }
+    // console.log('the exercise obj is : ', duration, description, date );
+    // res.json({ duration, description, date });
+    // return;
+    // add exercise to the user
+    user.exercises.push({ description, duration, date });
+    // return a user object added exercise property.
+    res.json(user);
+    // console.log('the user list is : ', users);
   }
 
-  // get the description from the request body
-  
 })
+
+
+// 1-5    
+ TODO: how to delete all row including 'console.log'?
 
 
 
