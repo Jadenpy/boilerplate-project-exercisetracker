@@ -73,8 +73,10 @@ app.post("/api/users/:_id/exercises", (req, res) => {
   // get the _id from the url
   let _id = req.params._id;
   console.log('the _id in paras is : ', _id);
+  // check if the id exist already
+  
   // get the username from the users array
-  let username = users.find(user => user._id === parseInt(_id)).username;
+  let username = users.find(user => user._id === parseInt(_id)).username || undefined;
   console.log('the username in users array is : ', username);
   return;
   // check if the username is valid
