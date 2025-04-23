@@ -67,7 +67,7 @@ app.post("/api/users", (req, res) => {
   let isTaken = users.some(user => user.username === username);
   if (isTaken) {
     res.json({ error: 'username already taken' });
-    console.log('username already taken');
+    // console.log('username already taken');
   } else {
     // _id prepare
     let _id = users.length + 1;
@@ -77,7 +77,7 @@ app.post("/api/users", (req, res) => {
     users.push(user);
     // return a object {username: _id: }
     res.json(user);
-    console.log('the user list is : ', users);
+    // console.log('the user list is : ', users);
   }
 })
 
@@ -85,7 +85,7 @@ app.post("/api/users", (req, res) => {
 app.get("/api/users", (req, res) => {
   // return a list of all users.
   res.json(users);
-  console.log('the user list is : ', users);
+  // console.log('the user list is : ', users);
 })
 
 // 1-4     TODO
@@ -178,15 +178,34 @@ app.get("/api/users/:_id/logs", (req, res) => {
     // console.log('the username is of the _id you input is not found');
     // return;
   } else {
-    // get the from and to date
-    // let from = req.query.from;
-    // let to = req.query.to;
-    // let limit = req.query.limit;
+    // get the query from URL
+    let from = req.query.from;
+    let to = req.query.to;
+    let limit = req.query.limit;
     // console.log('the from and to date is : ', from, to);
     // console.log('the limit is : ', limit);
+
     // filter the exercises by the from and to date
-    let count = user.exercises.length;
-    let logs = user.exercises;
+    let exc = user.exercises;
+    if (from && to) {
+      exc = exc.filter(exercise => {
+        let date = new Date(exercise.date);
+        from = new Date(from);
+        to = new Date(to);
+        // console.log('the date is : ', date);
+        // console.log('the from date is : ', from);
+        // console.log('the to date is : ', to);
+        // console.log('the date >= from && date <= to is : ', date >= from && date <= to);
+        return date >= from && date <= to;
+      })
+    }
+    if (limit) {
+      exc = exc.slice(0, limit);
+    }
+
+    // return
+    let count = exc.length;
+    let logs = exc;
     let resData = { _id: parseInt(_id), username: user.username, count, logs };
     res.json(resData);
     // console.log('the exercises of this user :' , user.exercises);
