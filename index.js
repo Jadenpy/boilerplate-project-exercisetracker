@@ -71,6 +71,7 @@ app.post("/api/users", (req, res) => {
   } else {
     // _id prepare
     let _id = users.length + 1;
+    _id = _id.toString();
     // new user prepare
     let user = { username, _id};
     // add new user to the users array
@@ -85,7 +86,7 @@ app.post("/api/users", (req, res) => {
 app.get("/api/users", (req, res) => {
   // return a list of all users.
   // fix: onle return the username and _id
-  let usersList = users.map(user => ({ username: user.username, _id: user._id.toString()} ));
+  let usersList = users.map(user => ({ username: user.username, _id: user._id} ));
   res.json(usersList);
   // res.json(users);
   // console.log('the user list is : ', users);
