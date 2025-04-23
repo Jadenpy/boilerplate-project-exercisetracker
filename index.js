@@ -108,7 +108,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
     // console.log('the username is of the _id you input is not found');
     return;
   } else { 
-    user.exercise = user.exercises || [];
+    //user.exercise = user.exercises || [];
     // check description
     if (!req.body.description) {
       // response err
@@ -158,7 +158,8 @@ app.post("/api/users/:_id/exercises", (req, res) => {
     // res.json({ duration, description, date });
     // return;
     // add exercise to the user
-    user.exercise.push({ description, duration, date });
+    // user.exercise.push({ description, duration, date });
+    user.exercise = { description, duration, date };
     // return a user object added exercise property.
     res.json(user);
     // console.log('the user list is : ', users);
