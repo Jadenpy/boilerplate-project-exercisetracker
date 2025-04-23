@@ -108,7 +108,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
     // console.log('the username is of the _id you input is not found');
     return;
   } else { 
-    user.exercises = user.exercises || [];
+    user.exercise = user.exercises || [];
     // check description
     if (!req.body.description) {
       // response err
@@ -158,7 +158,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
     // res.json({ duration, description, date });
     // return;
     // add exercise to the user
-    user.exercises.push({ description, duration, date });
+    user.exercise.push({ description, duration, date });
     // return a user object added exercise property.
     res.json(user);
     // console.log('the user list is : ', users);
@@ -174,7 +174,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
   let _id = req.params._id;
   // console.log('the _id in paras is : ', _id);
   // search the user in the users array
-  let user = users.find(user => user._id === parseInt(_id));
+  let user = users.find(user => user._id === _id);
   // check if the user is found
   if (!user) {
     // response err
@@ -190,7 +190,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
     // console.log('the limit is : ', limit);
 
     // filter the exercises by the from and to date
-    let exc = user.exercises;
+    let exc = user.exercise;
     if (from && to) {
       exc = exc.filter(exercise => {
         let date = new Date(exercise.date);
@@ -209,8 +209,8 @@ app.get("/api/users/:_id/logs", (req, res) => {
 
     // return
     let count = exc.length;
-    let logs = exc;
-    let resData = { _id: parseInt(_id), username: user.username, count, logs };
+    let log = exc;
+    let resData = { _id: parseInt(_id), username: user.username, count, log };
     res.json(resData);
     // console.log('the exercises of this user :' , user.exercises);
     
