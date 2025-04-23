@@ -55,169 +55,76 @@ app.use(bodyParse.urlencoded({ extended: false }));   // use body-parser
 // section 2 : the codes of the proj.
 
 // 2-1 :  declare the variables and the functions.
+let user = {};
+let users = [];
+let exer = {};
+let exerLogs = [];
+
 // 2-2 :  the logic of the proj.
 
-let users = [];
+
 
 // 1-2  
 app.post("/api/users", (req, res) => {
-  let username = req.body.username;
-  // console.log('the username you submit is : ', username);
-  // check if the username is taken.
-  let isTaken = users.some(user => user.username === username);
-  if (isTaken) {
-    res.json({ error: 'username already taken' });
-    // console.log('username already taken');
-  } else {
-    // _id prepare
-    let _id = users.length + 1;
-    _id = _id.toString();
-    // new user prepare
-    let user = { username, _id};
-    // add new user to the users array
-    users.push(user);
-    // return a object {username: _id: }
-    res.json(user);
-    // console.log('the user list is : ', users);
-  }
+  user.username = req.body.username;
+  user._id = users.length + 1;
+  user._id = user._id.toString();
+  users.push(user);
+  res.json(user);
 })
 
 // 1-3
 app.get("/api/users", (req, res) => {
-  // return a list of all users.
-  // fix: onle return the username and _id
-  let usersList = users.map(user => ({ username: user.username, _id: user._id} ));
-  res.json(usersList);
-  // res.json(users);
-  // console.log('the user list is : ', users);
+  res.json(users);
 })
 
 // 1-4     TODO
 app.post("/api/users/:_id/exercises", (req, res) => {
-  // get the _id from the url
-  let _id = req.params._id;
-  // console.log('the _id in paras is : ', _id);
-  // variables prepare
-  let description, duration, date;
-  // search the user in the users array
-  let user = users.find(user => user._id === _id);
-  // console.log('the user in users array is : ', user);
-  if (!user) {
-    // response err
-    res.json({ error: 'username not found' });
-    // console.log('the username is of the _id you input is not found');
-    return;
-  } else { 
-    user.log = user.log || [];
-    // check description
-    if (!req.body.description) {
-      // response err
-      res.json({ error: 'description not found' });
-      // console.log('the description you input is not found');
-      return;
-    } else {
-      description = req.body.description;
-      // console.log('the description you input is : ', description);
-    }
-    // check duration
-    if (!req.body.duration) {
-      // response err
-      res.json({ error: 'duration not found' });
-      // console.log('the duration you input is not found');
-      return;
-    } else {
-      // check if the duration is a number
-      if (isNaN(req.body.duration)) {
-        // response err
-        res.json({ error: 'duration is not a number' });
-        // console.log('the duration you input is not a number');
-        return;
-      }
-      duration = req.body.duration;
-      duration = duration;
-      // console.log('the duration you input is : ', duration);
-    }
-    // check date
-    if (!req.body.date) {
-      // use today's date
-      date = new Date();//.toDateString();
-      // format date "Mon Jan 01 1990"
-      date = date.toDateString();
-      // console.log('the date you input is not found, so use today\'s date', date);
-      // return;
 
-      // date = date.toISOString().split('T')[0];
-      // console.log('the date you input is not found, so use today\'s date', date);
-      // return;
-    } else {
-      date = req.body.date;
-      // console.log('the date you input is : ', date);
-      // return;
-    }
-    // console.log('the exercise obj is : ', duration, description, date );
-    // res.json({ duration, description, date });
-    // return;
-    // add exercise to the user
-    // user.exercise.push({ description, duration, date });
-    user.exercise = { description, duration, date };
-    user.log.push(user.exercise);
-    // return a user object added exercise property not including log.
-    resUser = user.map()
-    res.json(user);
-    // console.log('the user list is : ', users);
-  }
+  let _id, description, duration, date;
 
+  _id = req.params._id;
+  description = req.body.description;
+  duration = req.body.duration;
+  date = req.body.date || new Date().toDateString();
+  
+  exer = { description, duration, date, _id};
+
+  exerLogs.forEach((item) => {
+    if (item._id === _id) {
+      // if found, add the exercise to the log.
+      item.log.push(exer);
+      console.log(exerLogs);
+      res.json(exer);
+      return;
+    }
+    // if not found, create a new log.
+    exerLogs.push({ _id, log: [exer] });
+    console.log(exerLogs);
+  })
+  res.json(exer);
+
+  
+  
+  
+  
 })
 
 
 // 1-5
 //  TODO: how to delete all row including 'console.log'?
 app.get("/api/users/:_id/logs", (req, res) => {
-  // get the _id from the url
+  // git _id
   let _id = req.params._id;
-  // console.log('the _id in paras is : ', _id);
-  // search the user in the users array
-  let user = users.find(user => user._id === _id);
-  // check if the user is found
-  if (!user) {
-    // response err
-    res.json({ error: 'username not found' });
-    // console.log('the username is of the _id you input is not found');
-    // return;
-  } else {
-    // get the query from URL
-    let from = req.query.from;
-    let to = req.query.to;
-    let limit = req.query.limit;
-    // console.log('the from and to date is : ', from, to);
-    // console.log('the limit is : ', limit);
-
-    // filter the exercises by the from and to date
-    let exc = user.exercise;
-    if (from && to) {
-      exc = exc.filter(exercise => {
-        let date = new Date(exercise.date);
-        from = new Date(from);
-        to = new Date(to);
-        // console.log('the date is : ', date);
-        // console.log('the from date is : ', from);
-        // console.log('the to date is : ', to);
-        // console.log('the date >= from && date <= to is : ', date >= from && date <= to);
-        return date >= from && date <= to;
-      })
+  // looking for the _id's exercise log
+  exerLogs.forEach((item) => {
+    if (item._id === _id) {
+      // if found, return the log.  
+      res.json(item);
     }
-    if (limit) {
-      exc = exc.slice(0, limit);
-    }
+  })
 
-    // return
-    let count = exc.length;
-    let log = exc;
-    let resData = { _id, username: user.username, count, log };
-    res.json(resData);
-    // console.log('the exercises of this user :' , user.exercises);
-    
-  }
+ 
 })
 
 
