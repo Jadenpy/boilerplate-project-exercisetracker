@@ -55,9 +55,9 @@ app.use(bodyParse.urlencoded({ extended: false }));   // use body-parser
 // section 2 : the codes of the proj.
 
 // 2-1 :  declare the variables and the functions.
-let user = {};
+
 let users = [];
-let exer = {};
+
 let exerLogs = [];
 
 // 2-2 :  the logic of the proj.
@@ -66,10 +66,13 @@ let exerLogs = [];
 
 // 1-2  
 app.post("/api/users", (req, res) => {
+  let user = {}
   user.username = req.body.username;
   user._id = users.length + 1;
   user._id = user._id.toString();
   users.push(user);
+  // console.log(user,users);
+  
   res.json(user);
 })
 
@@ -80,28 +83,35 @@ app.get("/api/users", (req, res) => {
 
 // 1-4     TODO
 app.post("/api/users/:_id/exercises", (req, res) => {
-
-  let _id, description, duration, date;
-
+  let exer = {};
+  let _id, description, duration, date, username;
   _id = req.params._id;
+  // get username from users by _id
+  users.forEach((item) => {
+    if (item._id === _id) {
+      username = item.username;    
+    }
+  })
   description = req.body.description;
   duration = req.body.duration;
-  date = req.body.date || new Date().toDateString();
+  date = new Date(req.body.date).toDateString() || new Date().toDateString();
   
-  exer = { description, duration, date, _id};
+  exer = {username, description, duration: parseInt(duration), date, _id};
 
-  exerLogs.forEach((item) => {
-    if (item._id === _id) {
-      // if found, add the exercise to the log.
-      item.log.push(exer);
-      console.log(exerLogs);
-      res.json(exer);
-      return;
-    }
-    // if not found, create a new log.
-    exerLogs.push({ _id, log: [exer] });
-    console.log(exerLogs);
-  })
+  // exerLogs.forEach((item) => {
+  //   if (item._id === _id) {
+  //     // if found, add the exercise to the log.
+  //     item.log.push(exer);
+  //     console.log(exerLogs);
+  //     res.json(exer);
+  //     return;
+  //   }
+  //   // if not found, create a new log.
+  //   exerLogs.push({ _id, log: [exer] });
+  //   console.log(exerLogs);
+  // })
+  exerLogs.push({ _id, log: exer});
+  // console.log(exer, exerLogs);
   res.json(exer);
 
   
@@ -114,15 +124,39 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 // 1-5
 //  TODO: how to delete all row including 'console.log'?
 app.get("/api/users/:_id/logs", (req, res) => {
-  // git _id
-  let _id = req.params._id;
+  //        {
+  //          username: "fcc_test",
+  //          count: 1,
+  //          _id: "5fb5853f734231456ccb3b05",
+  //          log: [{
+  //           description: "test",
+  //           duration: 60,
+  //           date: "Mon Jan 01 1990",
+  //          }]
+  //        }
+
+
+  let count, username, _id, from, to, limit;
+  let log = [];
+  count = 0;
+  
+  // get _i
+  _id = req.params._id;
   // looking for the _id's exercise log
   exerLogs.forEach((item) => {
     if (item._id === _id) {
-      // if found, return the log.  
-      res.json(item);
+      // if found, return the log. 
+      ++count;
+      username = item.log.username;
+      description = item.log.description;
+      duration = item.log.duration;
+      date = item.log.date;
+      let tempObj = { description, duration, date } 
+      log.push(tempObj);
     }
   })
+  console.log({username, count, _id, log });
+  
 
  
 })
