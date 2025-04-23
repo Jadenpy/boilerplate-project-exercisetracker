@@ -100,7 +100,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
   // variables prepare
   let description, duration, date;
   // search the user in the users array
-  let user = users.find(user => user._id === parseInt(_id));
+  let user = users.find(user => user._id === _id);
   // console.log('the user in users array is : ', user);
   if (!user) {
     // response err
