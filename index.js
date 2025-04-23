@@ -84,7 +84,10 @@ app.post("/api/users", (req, res) => {
 // 1-3
 app.get("/api/users", (req, res) => {
   // return a list of all users.
-  res.json(users);
+  // fix: onle return the username and _id
+  let usersList = users.map(user => ({ username: user.username , _id: user._id} ));
+  res.json(usersList);
+  // res.json(users);
   // console.log('the user list is : ', users);
 })
 
