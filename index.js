@@ -155,8 +155,8 @@ app.get("/api/users/:_id/logs", (req, res) => {
       log.push(tempObj);
     }
   })
-  console.log({username, count, _id, log });
-  
+  // console.log({username, count, _id, log });
+  res.json({ username, count, _id, log })
 
  
 })
