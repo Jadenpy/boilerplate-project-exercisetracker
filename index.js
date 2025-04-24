@@ -152,6 +152,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
       description = item.description;
       duration = item.duration;
       date = item.date;
+      date = date.date.toDateString();
       let tempObj = { description, duration, date } 
       log.push(tempObj);
     }
