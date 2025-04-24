@@ -110,8 +110,9 @@ app.post("/api/users/:_id/exercises", (req, res) => {
   //   exerLogs.push({ _id, log: [exer] });
   //   console.log(exerLogs);
   // })
-  exerLogs.push({ _id, log: exer});
-  console.log(exer, exerLogs);
+  // exerLogs.push({ _id, log: exer});
+  exerLogs.push(exer);
+  // console.log(exer, exerLogs);
   res.json(exer);
 
   
@@ -122,7 +123,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 
 
 // 1-5
-//  TODO: how to delete all row including 'console.log'?
+
 app.get("/api/users/:_id/logs", (req, res) => {
   //        {
   //          username: "fcc_test",
@@ -147,27 +148,37 @@ app.get("/api/users/:_id/logs", (req, res) => {
     if (item._id === _id) {
       // if found, return the log. 
       // ++count;
-      username = item.log.username;
-      description = item.log.description;
-      duration = item.log.duration;
-      date = item.log.date;
+      username = item.username;
+      description = item.description;
+      duration = item.duration;
+      date = item.date;
       let tempObj = { description, duration, date } 
       log.push(tempObj);
     }
   })
+  // console.log({ username, count, _id, log });
+  
+  // return
   // console.log({username, count, _id, log });
 
   // add from and to query parameters to filter the logs by date.
-  from = new Date(req.query.from).toDateString();
-  to = new Date(req.query.to).toDateString();
+  from = req.query.from;
+  to = req.query.to;
+  // console.log(from, to);
   if (from && to) { 
+    console.log(from, to, 'from && to 被执行了');
+    from = new Date(from);
+    to = new Date(to);
     log = log.filter((item) => {
-      return item.date >= from && item.date <= to;
+      let itemDate = new Date(item.date);
+      return itemDate >= from && itemDate <= to;
     })
   }
   // add limit
-  limit = parseInt(req.query.limit);
+  limit =req.query.limit;
   if (limit) {
+    console.log('limit 被执行了');
+    limit = parseInt(limit);
     log = log.slice(0, limit); 
   }
 
