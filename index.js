@@ -111,7 +111,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
   //   console.log(exerLogs);
   // })
   exerLogs.push({ _id, log: exer});
-  // console.log(exer, exerLogs);
+  console.log(exer, exerLogs);
   res.json(exer);
 
   
@@ -146,7 +146,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
   exerLogs.forEach((item) => {
     if (item._id === _id) {
       // if found, return the log. 
-      ++count;
+      // ++count;
       username = item.log.username;
       description = item.log.description;
       duration = item.log.duration;
@@ -156,6 +156,23 @@ app.get("/api/users/:_id/logs", (req, res) => {
     }
   })
   // console.log({username, count, _id, log });
+
+  // add from and to query parameters to filter the logs by date.
+  from = new Date(req.query.from).toDateString();
+  to = new Date(req.query.to).toDateString();
+  if (from && to) { 
+    log = log.filter((item) => {
+      return item.date >= from && item.date <= to;
+    })
+  }
+  // add limit
+  limit = parseInt(req.query.limit);
+  if (limit) {
+    log = log.slice(0, limit); 
+  }
+
+  count = log.length;
+
   res.json({ username, count, _id, log })
 
  
